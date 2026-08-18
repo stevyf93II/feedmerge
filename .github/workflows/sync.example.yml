@@ -1,0 +1,51 @@
+# sync.example.yml — a scheduled sync that commits the catalog back to the
+# repo. This is the deployment most users of this tool actually want: no
+# server, no database, just a cron and a versioned JSON file consumers fetch
+# raw from GitHub (or from the site the repo deploys).
+#
+# To use: rename to sync.yml, point feedmerge.config.js at your feed, and
+# put any feed credentials in repo secrets.
+#
+# Note the failure behavior this buys you for free:
+#   - If the feed is down, the run fails loudly. The catalog is untouched.
+#   - If the feed returns a suspiciously small roster, the publish guard
+#     refuses (exit code 2) and the commit step never runs. The catalog is
+#     untouched.
+#   - Every published state is a git commit, so recovery is `git revert`,
+#     not archaeology.
+
+name: Scheduled sync
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Publish even if the record count dropped sharply"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run sync
+        env:
+          FEED_KEY: ${{ secrets.FEED_KEY }}
+        run: |
+          node src/cli.js run --config feedmerge.config.js ${{ inputs.force && '--force' || '' }}
+      - name: Commit catalog
+        run: |
+          git config user.name "feedmerge-bot"
+          git config user.email "feedmerge-bot@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet || git commit -m "sync: update catalog"
+          git push
