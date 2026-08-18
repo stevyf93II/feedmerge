@@ -1,0 +1,29 @@
+{
+  "name": "feedmerge",
+  "version": "0.1.0",
+  "description": "Sync a vendor data feed into a clean, versioned JSON catalog without letting a fast feed wipe slow, hand-built enrichment.",
+  "license": "MIT",
+  "author": "Steve Flowers",
+  "type": "module",
+  "bin": {
+    "feedmerge": "src/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevyf93II/feedmerge.git"
+  },
+  "keywords": [
+    "etl",
+    "sync",
+    "catalog",
+    "data-pipeline",
+    "merge",
+    "inventory"
+  ]
+}
