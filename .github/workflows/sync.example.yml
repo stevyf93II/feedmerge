@@ -3,8 +3,9 @@
 # server, no database, just a cron and a versioned JSON file consumers fetch
 # raw from GitHub (or from the site the repo deploys).
 #
-# To use: rename to sync.yml, point feedmerge.config.js at your feed, and
-# put any feed credentials in repo secrets.
+# To use: rename to sync.yml, uncomment the schedule block below, point
+# feedmerge.config.js at your feed, and put any feed credentials in repo
+# secrets.
 #
 # Note the failure behavior this buys you for free:
 #   - If the feed is down, the run fails loudly. The catalog is untouched.
@@ -16,8 +17,11 @@
 
 name: Scheduled sync
 on:
-  schedule:
-    - cron: "0 */6 * * *"
+  # The cron is commented out on purpose: GitHub Actions runs any workflow in
+  # this directory regardless of the .example suffix, and an example must not
+  # fire (and fail) every six hours in this repo. Uncomment when you deploy.
+  # schedule:
+  #   - cron: "0 */6 * * *"
   workflow_dispatch:
     inputs:
       force:
