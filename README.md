@@ -87,6 +87,10 @@ CLI: `feedmerge run [--force]`, `feedmerge rollback`, `feedmerge validate`, all 
 
 The intended deployment is `.github/workflows/sync.example.yml`: a GitHub Actions cron that runs the sync and commits the catalog back to the repo. No server, no database. Consumers fetch `data/catalog.json` raw from GitHub or from whatever site the repo deploys. Because every published state is a git commit, recovery from a bad publish is `git revert`, not archaeology — and because the guard exits nonzero, a broken feed never reaches the commit step at all.
 
+## Serving it to agents
+
+The catalog this publishes is exactly what [catalog-mcp](https://github.com/stevyf93II/catalog-mcp) serves: point that MCP server at your `catalog.json` and any MCP client gets filtering, grouping, ranking, and schema discovery over your records.
+
 ## Non-goals
 
 - Not a general ETL framework. One feed in, one catalog out.
