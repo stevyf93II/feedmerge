@@ -1,5 +1,5 @@
 {
-  "name": "feedmerge",
+  "name": "@saf2/feedmerge",
   "version": "0.1.0",
   "description": "Sync a vendor data feed into a clean, versioned JSON catalog without letting a fast feed wipe slow, hand-built enrichment.",
   "license": "MIT",
