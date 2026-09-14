@@ -1,6 +1,7 @@
 # feedmerge
 
 [![CI](https://github.com/stevyf93II/feedmerge/actions/workflows/ci.yml/badge.svg)](https://github.com/stevyf93II/feedmerge/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/%40saf2%2Ffeedmerge)](https://www.npmjs.com/package/@saf2/feedmerge)
 
 Sync a vendor data feed into a clean, versioned JSON catalog without letting a fast feed wipe slow, hand-built enrichment.
 
@@ -42,7 +43,27 @@ The feed is authoritative only for the fields you list in `feedFields`, and even
 
 **Publish** writes a timestamped snapshot plus a stable `catalog.json` pointer, refuses to publish when the active record count drops more than `maxDropPct` (default 20%) unless forced, prunes snapshots beyond `keep`, and can roll back — setting the bad snapshot aside as evidence rather than deleting it.
 
-## Quickstart
+## Install
+
+Published on npm as `@saf2/feedmerge`; the CLI command is `feedmerge`.
+
+```sh
+npm install -g @saf2/feedmerge     # or run it ad hoc with npx @saf2/feedmerge
+```
+
+To run against a real feed:
+
+```sh
+curl -O https://raw.githubusercontent.com/stevyf93II/feedmerge/main/feedmerge.config.example.js
+cp feedmerge.config.example.js feedmerge.config.js
+# edit feedmerge.config.js
+feedmerge validate
+feedmerge run
+```
+
+CLI: `feedmerge run [--force]`, `feedmerge rollback`, `feedmerge validate`, all taking `--config <file>`. `run` exits 2 when the guard refuses, so schedulers see a real failure.
+
+## Quickstart from source
 
 ```sh
 git clone https://github.com/stevyf93II/feedmerge.git
@@ -52,15 +73,6 @@ node examples/public-data/run-example.js      # the whole story, offline
 ```
 
 The example walks three days of a feed: a first sync, a hand-enrichment between syncs, a price change that does not touch the enrichment, a vanished record that is retired rather than deleted, and an empty-feed day that the publish guard refuses to publish.
-
-To run against a real feed:
-
-```sh
-cp feedmerge.config.example.js feedmerge.config.js
-# edit feedmerge.config.js
-node src/cli.js validate
-node src/cli.js run
-```
 
 ## Configuration
 
@@ -80,8 +92,6 @@ Everything lives in one config module (see `feedmerge.config.example.js` for the
 | `outDir` | yes | snapshot directory; `catalog.json` here is the stable pointer |
 | `keep` | no | snapshots to retain (default 5) |
 | `maxDropPct` | no | publish guard threshold (default 20) |
-
-CLI: `feedmerge run [--force]`, `feedmerge rollback`, `feedmerge validate`, all taking `--config <file>`. `run` exits 2 when the guard refuses, so schedulers see a real failure.
 
 ## Deployment
 
